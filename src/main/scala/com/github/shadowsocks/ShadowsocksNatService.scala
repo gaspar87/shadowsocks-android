@@ -63,6 +63,7 @@ import android.graphics.Color
 import com.github.shadowsocks.aidl.Config
 import scala.collection.mutable.ArrayBuffer
 import java.io.File
+import com.github.shadowsocks.dpfwds._
 
 case class TrafficStat(tx: Long, rx: Long, timestamp: Long)
 
@@ -110,6 +111,8 @@ class ShadowsocksNatService extends Service with BaseService {
       }
   }
 
+  var dpfwds: Option[DPfwdS] = None
+  
   def startShadowsocksDaemon() {
     if (isACLEnabled && config.isGFWList) {
       val chn_list: Array[String] = getResources.getStringArray(R.array.chn_list_full)
@@ -118,13 +121,27 @@ class ShadowsocksNatService extends Service with BaseService {
       })
     }
 
-    val args = (Path.BASE +
+    /*val args = (Path.BASE +
       "ss-local -b 127.0.0.1 -s '%s' -p '%d' -l '%d' -k ''%s' -m '%s' -f " +
       Path.BASE + "ss-local.pid")
       .format(config.proxy, config.remotePort, config.localPort, config.sitekey, config.encMethod)
     val cmd =  if (config.isGFWList && isACLEnabled) args + " --acl " + Path.BASE + "chn.acl" else args
     if (BuildConfig.DEBUG) Log.d(TAG, cmd)
     Console.runCommand(cmd)
+	*/
+	dpfwds.map{ _dpfwds =>
+              _dpfwds.terminate
+              dpfwds = None
+	    } orElse {
+              val _dpfwds = new DPfwdS("127.0.0.1",
+                                      config.localPort,
+                                      "gaspar", config.proxy, config.remotePort, 
+                                      passwd = Some(config.sitekey.mkString))
+  
+              _dpfwds.start
+              dpfwds = Some(_dpfwds)
+              dpfwds
+	    }	
   }
 
   def startDnsDaemon() {
@@ -301,12 +318,11 @@ class ShadowsocksNatService extends Service with BaseService {
     ab.append("killall -15 pdnsd")
 
     Console.runRootCommand(ab.toArray)
-    ab.clear()
-
-    ab.append("kill -9 `cat " + Path.BASE + "ss-local.pid`")
-    ab.append("killall -9 ss-local")
-
-    Console.runCommand(ab.toArray)
+	
+	dpfwds.map{ _dpfwds =>
+              _dpfwds.terminate
+              dpfwds = None
+	}
   }
 
   override def onStartCommand(intent: Intent, flags: Int, startId: Int): Int = {
