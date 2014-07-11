@@ -10,5 +10,4 @@ do
     mv libs/armeabi-v7a/$app src/main/assets/armeabi-v7a/
     mv libs/x86/$app src/main/assets/x86/
 done
-rm -rf src/main/jni
 mv libs src/main/jni
