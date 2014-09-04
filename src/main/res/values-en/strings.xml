@@ -8,6 +8,9 @@
   <string name="function_cat">Service Controller</string>
   <string name="service_controller">Proxy Switch</string>
   <string name="service_summary">Enable / Disable Proxy</string>
+  <string name="qr">Scan QR Code</string>
+  <string name="qr_summary">Scan QR Code from server application</string>
+  <string name="advanced">Advanced Settings</string>
 
   <!-- proxy category -->
   <string name="proxy_cat">Server Settings</string>

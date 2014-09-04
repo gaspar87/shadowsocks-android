@@ -51,6 +51,7 @@ import com.google.analytics.tracking.android.{MapBuilder, EasyTracker}
 import de.keyboardsurfer.android.widget.crouton.{Crouton, Style, Configuration}
 import java.util.Hashtable
 import com.actionbarsherlock.app.SherlockPreferenceActivity
+import android.preference.Preference.OnPreferenceClickListener
 import org.jraf.android.backport.switchwidget.Switch
 import android.content.pm.{PackageInfo, PackageManager}
 import android.net.{Uri, VpnService}
@@ -241,7 +242,7 @@ class Shadowsocks
   lazy val profileManager =
     new ProfileManager(settings, getApplication.asInstanceOf[ShadowsocksApplication].dbHelper)
 
-  val handler = new Handler()
+  val handler = new Handler()   
 
   def isSinglePane: Boolean = {
     if (singlePane == -1) {
@@ -444,7 +445,7 @@ class Shadowsocks
 
   override def setContentView(layoutResId: Int) {
     drawer.setContentView(layoutResId)
-    initAdView()
+    //initAdView()
     onContentChanged()
   }
 
@@ -453,6 +454,27 @@ class Shadowsocks
     super.onCreate(savedInstanceState)
 
     addPreferencesFromResource(R.xml.pref_all)
+	
+	val qrCodePref = findPreference("QRbutton")
+	qrCodePref.setOnPreferenceClickListener(new OnPreferenceClickListener {	
+	override def onPreferenceClick(preference: Preference) = {
+    val h = showProgress(getString(R.string.loading))
+            h.postDelayed(new Runnable() {
+              def run() {
+                val integrator = new IntentIntegrator(Shadowsocks.this)
+                integrator.initiateScan()
+                h.sendEmptyMessage(0)
+              }
+            }, 600)
+	true
+	}
+	})
+  
+	//My edit:
+	
+	//setContentView(R.layout.main2); 
+	
+	//val main2 = getLayoutInflater.inflate(R.layout.main2, null).asInstanceOf[RelativeLayout]
 
     // Initialize the profile
     currentProfile = {
@@ -484,9 +506,7 @@ class Shadowsocks
     }
 
     // Initialize action bar
-    val switchLayout = getLayoutInflater
-      .inflate(R.layout.layout_switch, null)
-      .asInstanceOf[RelativeLayout]
+    val switchLayout = getLayoutInflater.inflate(R.layout.layout_switch, null).asInstanceOf[RelativeLayout]
     val title: TextView = switchLayout.findViewById(R.id.title).asInstanceOf[TextView]
     val tf: Typeface = Typefaces.get(this, "fonts/Iceland.ttf")
     if (tf != null) title.setTypeface(tf)
@@ -558,7 +578,9 @@ class Shadowsocks
   }
 
   def newProfile(id: Int) {
-
+    addProfile(id)
+	
+	/*
     val builder = new AlertDialog.Builder(this)
     builder
       .setTitle(R.string.add_profile)
@@ -583,6 +605,7 @@ class Shadowsocks
       }
     })
     builder.create().show()
+	*/
   }
 
   def addProfile(profile: Profile) {
@@ -684,11 +707,11 @@ class Shadowsocks
     val buf = new ListBuffer[Any]()
 
     buf += new Category(getString(R.string.profiles))
+	
+    buf +=
+      new Item(-400, getString(R.string.add_profile), android.R.drawable.ic_menu_add, newProfile)	
 
     buf ++= getProfileList
-
-    buf +=
-      new Item(-400, getString(R.string.add_profile), android.R.drawable.ic_menu_add, newProfile)
 
     buf += new Category(getString(R.string.settings))
 
@@ -758,7 +781,8 @@ class Shadowsocks
       if (pref != null) {
         pref.setEnabled(enabled)
       }
-    }
+    }	
+	
     for (name <- Shadowsocks.FEATRUE_PREFS) {
       val pref = findPreference(name)
       if (pref != null) {
@@ -772,7 +796,7 @@ class Shadowsocks
     }
   }
 
-  private def updatePreferenceScreen() {
+  private def updatePreferenceScreen() {      
     val profile = currentProfile
     for (name <- Shadowsocks.PROXY_PREFS) {
       val pref = findPreference(name)
@@ -782,6 +806,7 @@ class Shadowsocks
       val pref = findPreference(name)
       Shadowsocks.updatePreference(pref, name, profile)
     }
+		
   }
 
   override def onStart() {

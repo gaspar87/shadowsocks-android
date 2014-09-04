@@ -8,7 +8,10 @@
   <string name="function_cat">Controlador del Servicio</string>
   <string name="service_controller">Interruptor del Proxy</string>
   <string name="service_summary">Habilitar / Deshabilitar Proxy</string>
-
+  <string name="qr">Escanear código QR</string>
+  <string name="qr_summary">Escanear código QR de la aplicación servidor</string>
+  <string name="advanced">Configuración avanzada</string>
+  
   <!-- proxy category -->
   <string name="proxy_cat">Configuraciones del Servidor</string>
   <string name="profile">Perfil</string>
