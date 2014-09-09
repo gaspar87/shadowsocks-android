@@ -66,10 +66,9 @@
   <!-- alert category -->
   <string name="ok_iknow">OK</string>
   <string name="port_alert">The port number should be greater than 1024</string>
-  <string name="port_empty">Port should not be empty</string>
-  <string name="proxy_empty">Proxy should not be empty</string>
-  <string name="crash_alert">An unexpected exit detected, the context has been reset.
-  </string>
+  <string name="port_empty">Port should not be empty. Choose one or scan QR Code</string>
+  <string name="proxy_empty">Proxy should not be empty. Choose one or scan QR Code</string>
+  <string name="crash_alert">An unexpected exit detected, the context has been reset.</string>
   <string name="connecting">Connecting…</string>
   <string name="initializing">Initializing…</string>
   <string name="recovering">Resetting…</string>
@@ -87,7 +86,9 @@
   <string name="flush_dnscache">Flush DNS Cache</string>
   <string name="flushing">Flushing</string>
   <string name="add_profile">Add Profile</string>
-
+  <string name="help">Help</string>
+  <string name="howto">How to use?</string>
+  
   <!-- profile -->
   <string name="add_profile_dialog">Add this TunnelAr Profile?</string>
   <string-array name="add_profile_methods">

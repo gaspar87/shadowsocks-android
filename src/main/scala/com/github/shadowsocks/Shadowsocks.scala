@@ -469,12 +469,6 @@ class Shadowsocks
 	true
 	}
 	})
-  
-	//My edit:
-	
-	//setContentView(R.layout.main2); 
-	
-	//val main2 = getLayoutInflater.inflate(R.layout.main2, null).asInstanceOf[RelativeLayout]
 
     // Initialize the profile
     currentProfile = {
@@ -713,15 +707,15 @@ class Shadowsocks
 
     buf ++= getProfileList
 
-    buf += new Category(getString(R.string.settings))
-
+    buf += new Category(getString(R.string.help))
+	/*
     buf += new Item(-100, getString(R.string.recovery), android.R.drawable.ic_menu_revert, _ => {
       EasyTracker
         .getInstance(this)
         .send(MapBuilder.createEvent(Shadowsocks.TAG, "reset", getVersionName, null).build())
       recovery()
     })
-
+	
     buf +=
       new Item(-200, getString(R.string.flush_dnscache), android.R.drawable.ic_menu_delete, _ => {
         EasyTracker
@@ -730,14 +724,22 @@ class Shadowsocks
             MapBuilder.createEvent(Shadowsocks.TAG, "flush_dnscache", getVersionName, null).build())
         flushDnsCache()
       })
+	*/
 
+    buf += new Item(-300, getString(R.string.howto), android.R.drawable.ic_menu_info_details, _ => {
+      EasyTracker
+        .getInstance(this)
+        .send(MapBuilder.createEvent(Shadowsocks.TAG, "howto", getVersionName, null).build())
+      showHowTo()
+	}) 
+	
     buf += new Item(-300, getString(R.string.about), android.R.drawable.ic_menu_info_details, _ => {
       EasyTracker
         .getInstance(this)
         .send(MapBuilder.createEvent(Shadowsocks.TAG, "about", getVersionName, null).build())
       showAbout()
     })
-
+	
     buf.toList
   }
 
@@ -930,7 +932,7 @@ class Shadowsocks
     if (isVpnEnabled) {
       val style = new Style.Builder().setBackgroundColorValue(Style.holoBlueLight).build()
       val config = new Configuration.Builder().setDuration(Configuration.DURATION_LONG).build()
-      Crouton.makeText(Shadowsocks.this, R.string.vpn_status, style).setConfiguration(config).show()
+      //Crouton.makeText(Shadowsocks.this, R.string.vpn_status, style).setConfiguration(config).show()
       changeSwitch(checked = false)
     }
     true
@@ -968,6 +970,38 @@ class Shadowsocks
       .show()
   }
 
+  private def showHowTo() {
+
+    val web = new WebView(this)
+    web.loadUrl("file:///android_asset/pages/howto.html")
+    web.setWebViewClient(new WebViewClient() {
+      override def shouldOverrideUrlLoading(view: WebView, url: String): Boolean = {
+        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)))
+        true
+      }
+    })
+
+    var versionName = ""
+    try {
+      versionName = getPackageManager.getPackageInfo(getPackageName, 0).versionName
+    } catch {
+      case ex: PackageManager.NameNotFoundException =>
+        versionName = ""
+    }
+
+    new AlertDialog.Builder(this)
+      .setTitle("How to use?")
+      .setCancelable(false)
+      .setNegativeButton(getString(R.string.ok_iknow), new DialogInterface.OnClickListener() {
+      override def onClick(dialog: DialogInterface, id: Int) {
+        dialog.cancel()
+      }
+    })
+      .setView(web)
+      .create()
+      .show()
+  }
+  
   def clearDialog() {
     if (progressDialog != null) {
       progressDialog.dismiss()
