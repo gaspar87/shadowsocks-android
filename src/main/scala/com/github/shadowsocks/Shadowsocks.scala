@@ -50,6 +50,7 @@ import android.widget._
 import com.google.analytics.tracking.android.{MapBuilder, EasyTracker}
 import de.keyboardsurfer.android.widget.crouton.{Crouton, Style, Configuration}
 import java.util.Hashtable
+import java.util.Locale
 import com.actionbarsherlock.app.SherlockPreferenceActivity
 import android.preference.Preference.OnPreferenceClickListener
 import org.jraf.android.backport.switchwidget.Switch
@@ -938,6 +939,41 @@ class Shadowsocks
     true
   }
 
+  private def showHowTo() {
+    val web = new WebView(this)
+    var url = "file:///android_asset/pages/howto.html";
+	if (Locale.getDefault().getLanguage().equals("es")) {
+	    url = "file:///android_asset/pages/howto_es.html";
+	}
+	web.loadUrl(url);
+    web.setWebViewClient(new WebViewClient() {
+      override def shouldOverrideUrlLoading(view: WebView, url: String): Boolean = {
+        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)))
+        true
+      }
+    })
+
+    var versionName = ""
+    try {
+      versionName = getPackageManager.getPackageInfo(getPackageName, 0).versionName
+    } catch {
+      case ex: PackageManager.NameNotFoundException =>
+        versionName = ""
+    }
+
+    new AlertDialog.Builder(this)
+      .setTitle(getString(R.string.howto))
+      .setCancelable(false)
+      .setNegativeButton(getString(R.string.ok_iknow), new DialogInterface.OnClickListener() {
+      override def onClick(dialog: DialogInterface, id: Int) {
+        dialog.cancel()
+      }
+    })
+      .setView(web)
+      .create()
+      .show()
+  }
+  
   private def showAbout() {
 
     val web = new WebView(this)
@@ -968,39 +1004,7 @@ class Shadowsocks
       .setView(web)
       .create()
       .show()
-  }
-
-  private def showHowTo() {
-
-    val web = new WebView(this)
-    web.loadUrl("file:///android_asset/pages/howto.html")
-    web.setWebViewClient(new WebViewClient() {
-      override def shouldOverrideUrlLoading(view: WebView, url: String): Boolean = {
-        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)))
-        true
-      }
-    })
-
-    var versionName = ""
-    try {
-      versionName = getPackageManager.getPackageInfo(getPackageName, 0).versionName
-    } catch {
-      case ex: PackageManager.NameNotFoundException =>
-        versionName = ""
-    }
-
-    new AlertDialog.Builder(this)
-      .setTitle("How to use?")
-      .setCancelable(false)
-      .setNegativeButton(getString(R.string.ok_iknow), new DialogInterface.OnClickListener() {
-      override def onClick(dialog: DialogInterface, id: Int) {
-        dialog.cancel()
-      }
-    })
-      .setView(web)
-      .create()
-      .show()
-  }
+  }  
   
   def clearDialog() {
     if (progressDialog != null) {
@@ -1053,5 +1057,4 @@ class Shadowsocks
       menuAdapter.updateList(getMenuList, currentProfile.id)
     }
   }
-
 }
