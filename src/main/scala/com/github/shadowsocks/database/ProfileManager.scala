@@ -43,6 +43,7 @@ import android.util.Log
 import com.github.shadowsocks._
 import android.content.{SharedPreferences, Context}
 import com.github.shadowsocks.utils.Key
+import com.github.tunnelar.database.ProfileType
 
 class ProfileManager(settings: SharedPreferences, dbHelper: DBHelper) {
 
@@ -124,8 +125,9 @@ class ProfileManager(settings: SharedPreferences, dbHelper: DBHelper) {
     edit.putBoolean(Key.isUdpDns, profile.udpdns)
     edit.putString(Key.profileName, profile.name)
     edit.putString(Key.proxy, profile.host)
-    edit.putString(Key.sitekey, profile.password)
-    edit.putString(Key.encMethod, profile.method)
+    edit.putString(Key.sitekey, profile.password)	
+    edit.putString(Key.encMethod, profile.method)	
+	edit.putString(Key.profileType, profile.profileType.toString)
     edit.putString(Key.remotePort, profile.remotePort.toString)
     edit.putString(Key.localPort, profile.localPort.toString)
     edit.putString(Key.proxied, profile.individual)
@@ -149,6 +151,13 @@ class ProfileManager(settings: SharedPreferences, dbHelper: DBHelper) {
     profile.host = settings.getString(Key.proxy, "127.0.0.1")
     profile.password = settings.getString(Key.sitekey, "default")
     profile.method = settings.getString(Key.encMethod, "table")
+	
+	if (profile.method == "bf-cfb")  {
+		  profile.profileType = ProfileType.Shadowsocks;
+		}else{
+		 profile.profileType = ProfileType.SSH;
+		}
+	
     profile.remotePort = try {
       Integer.valueOf(settings.getString(Key.remotePort, "1984"))
     } catch {

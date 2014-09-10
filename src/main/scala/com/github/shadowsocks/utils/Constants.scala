@@ -81,6 +81,7 @@ object Key {
   val proxy = "proxy"
   val sitekey = "sitekey"
   val encMethod = "encMethod"
+  val profileType = "profileType"
   val remotePort = "remotePort"
   val localPort = "port"
 }

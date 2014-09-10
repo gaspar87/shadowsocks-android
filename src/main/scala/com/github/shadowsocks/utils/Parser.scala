@@ -40,6 +40,7 @@
 package com.github.shadowsocks.utils
 
 import com.github.shadowsocks.database.Profile
+import com.github.tunnelar.database.ProfileType
 import android.net.Uri
 import android.util.{Log, Base64}
 
@@ -62,6 +63,19 @@ object Parser {
         profile.remotePort = serverinfo(1).toInt
         profile.localPort = 1080
         profile.method = encinfo(0)
+		
+		/*
+		|| (profile.method == "aes-256-cfb") || 
+		(profile.method == "des-cfb") || (profile.method == "rc4")
+		(profile.method == "table")
+		*/
+		
+		if (profile.method == "bf-cfb")  {
+		  profile.profileType = ProfileType.Shadowsocks;
+		}else{
+		 profile.profileType = ProfileType.SSH;
+		}
+		
         profile.password = encinfo(1)
         return Some(profile)
       }

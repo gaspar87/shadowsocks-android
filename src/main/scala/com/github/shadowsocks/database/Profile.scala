@@ -40,6 +40,7 @@
 package com.github.shadowsocks.database
 
 import com.j256.ormlite.field.{DataType, DatabaseField}
+import com.github.tunnelar.database.ProfileType
 
 class Profile {
   @DatabaseField(generatedId = true)
@@ -62,6 +63,9 @@ class Profile {
 
   @DatabaseField
   var method: String = ""
+  
+  @DatabaseField(dataType = DataType.ENUM_STRING)
+  var profileType: ProfileType = ProfileType.Shadowsocks
 
   @DatabaseField
   var date: String = ""
