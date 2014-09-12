@@ -52,8 +52,8 @@ trait BaseService {
   var state = State.INIT
   var callbackCount = 0
 
-  final val callbacks = new RemoteCallbackList[IShadowsocksServiceCallback]
-
+  final val callbacks = new RemoteCallbackList[IShadowsocksServiceCallback]  
+  
   protected val binder = new IShadowsocksService.Stub {
     override def getMode: Int = {
       getServiceMode

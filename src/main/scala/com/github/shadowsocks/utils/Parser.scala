@@ -73,7 +73,7 @@ object Parser {
 		if (profile.method == "bf-cfb")  {
 		  profile.profileType = ProfileType.Shadowsocks;
 		}else{
-		 profile.profileType = ProfileType.SSH;
+		  profile.profileType = ProfileType.SSH;
 		}
 		
         profile.password = encinfo(1)

@@ -75,6 +75,8 @@ import scala.Some
 import com.github.shadowsocks.database.Item
 import com.github.shadowsocks.database.Category
 import com.github.shadowsocks.utils.Console
+import com.github.tunnelar._
+import com.github.tunnelar.database.ProfileType
 
 class ProfileIconDownloader(context: Context, connectTimeout: Int, readTimeout: Int)
   extends BaseImageDownloader(context, connectTimeout, readTimeout) {
@@ -166,6 +168,7 @@ object Shadowsocks {
       case Key.localPort => updateSummaryEditTextPreference(pref, profile.localPort.toString)
       case Key.sitekey => updatePasswordEditTextPreference(pref, profile.password)
       case Key.encMethod => updateListPreference(pref, profile.method)
+	  // TODO mostrar de alguna forma si el perfil corresponde a SSH o Shadowsocks
       case Key.isGFWList => updateCheckBoxPreference(pref, profile.chnroute)
       case Key.isGlobalProxy => updateCheckBoxPreference(pref, profile.global)
       case Key.isTrafficStat => updateCheckBoxPreference(pref, profile.traffic)
@@ -194,14 +197,35 @@ class Shadowsocks
   var currentProfile = new Profile
   var vpnEnabled = -1
 
+  
   // Services
-  var currentServiceName = classOf[ShadowsocksNatService].getName
+  // TODO: solo classOf[ShadowsocksNatService].getName si el profile es de tipo Shadowsocks
+  var currentServiceName = classOf[ShadowsocksNatService].getName  
   var bgService: IShadowsocksService = null
   val callback = new IShadowsocksServiceCallback.Stub {
     override def stateChanged(state: Int, msg: String) {
       onStateChanged(state, msg)
     }
   }
+  
+  private def getClassServiceFromCurrentProfile() {
+    if (currentProfile.profileType == ProfileType.SSH) {
+       if (!isVpnEnabled) classOf[SSHNatService] else classOf[ShadowsocksVpnService]
+	} else {
+	   // TODO falta el SSHVPNService
+	   if (!isVpnEnabled) classOf[ShadowsocksNatService] else classOf[ShadowsocksVpnService]
+	}
+  }
+  
+  private def updateServiceName() {
+    if (currentProfile.profileType == ProfileType.SSH) {
+       if (!isVpnEnabled) classOf[SSHNatService] else classOf[ShadowsocksVpnService]
+	} else {
+	   // TODO falta el SSHVPNService
+	   if (!isVpnEnabled) classOf[ShadowsocksNatService] else classOf[ShadowsocksVpnService]
+	}   
+  }
+  
   val connection = new ServiceConnection {
     override def onServiceConnected(name: ComponentName, service: IBinder) {
       // Initialize the background service
@@ -475,8 +499,11 @@ class Shadowsocks
     currentProfile = {
       profileManager.getProfile(settings.getInt(Key.profileId, -1)) getOrElse currentProfile
     }
-
+	
+	updateServiceName()
+	
     // Update the profile
+	// TODO ver que pasa con esto
     if (!status.getBoolean(getVersionName, false)) {
       val h = showProgress(getString(R.string.initializing))
       status.edit.putBoolean(getVersionName, true).apply()
@@ -528,7 +555,12 @@ class Shadowsocks
 
   def attachService() {
     if (bgService == null) {
-      val s = if (!isVpnEnabled) classOf[ShadowsocksNatService] else classOf[ShadowsocksVpnService]
+	  // TODO: solo classOf[ShadowsocksNatService].getName si el profile es de tipo Shadowsocks
+	  // FIXME  val s = getClassServiceFromCurrentProfile()       
+	  val s = if (!isVpnEnabled) 
+	      (if (currentProfile.profileType == ProfileType.SSH) classOf[SSHNatService] else classOf[ShadowsocksNatService]) 
+		  else classOf[ShadowsocksVpnService]
+	  
       val intent = new Intent(this, s)
       intent.setAction(Action.SERVICE)
       bindService(intent, connection, Context.BIND_AUTO_CREATE)
@@ -614,6 +646,8 @@ class Shadowsocks
         profileManager.createOrUpdateProfile(currentProfile)
         profileManager.reload(currentProfile.id)
         menuAdapter.updateList(getMenuList, currentProfile.id)
+		
+		updateServiceName()
 
         updatePreferenceScreen()
 
@@ -633,6 +667,8 @@ class Shadowsocks
         profileManager.save()
         menuAdapter.updateList(getMenuList, currentProfile.id)
 
+		updateServiceName()
+		
         updatePreferenceScreen()
 
         h.sendEmptyMessage(0)
@@ -650,6 +686,8 @@ class Shadowsocks
         currentProfile = profileManager.reload(id)
         menuAdapter.setActiveId(id)
         menuAdapter.notifyDataSetChanged()
+		
+		updateServiceName()
 
         updatePreferenceScreen()
 
@@ -680,6 +718,8 @@ class Shadowsocks
         }
         currentProfile = profileManager.load(profileId)
         menuAdapter.updateList(getMenuList, currentProfile.id)
+		
+		updateServiceName()
 
         sendBroadcast(new Intent(Action.UPDATE_FRAGMENT))
 
