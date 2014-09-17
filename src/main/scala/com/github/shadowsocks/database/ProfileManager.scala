@@ -152,7 +152,7 @@ class ProfileManager(settings: SharedPreferences, dbHelper: DBHelper) {
     profile.password = settings.getString(Key.sitekey, "default")
     profile.method = settings.getString(Key.encMethod, "table")
 	
-	if (profile.method == "bf-cfb")  {
+	if ((profile.method == "bf-cfb") || (profile.method == "aes-256-cfb") || (profile.method == "des-cfb") || (profile.method == "rc4") || (profile.method == "table"))  {
 		  profile.profileType = ProfileType.Shadowsocks;
 		}else{
 		 profile.profileType = ProfileType.SSH;

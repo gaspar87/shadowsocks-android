@@ -64,13 +64,7 @@ object Parser {
         profile.localPort = 1080
         profile.method = encinfo(0)
 		
-		/*
-		|| (profile.method == "aes-256-cfb") || 
-		(profile.method == "des-cfb") || (profile.method == "rc4")
-		(profile.method == "table")
-		*/
-		
-		if (profile.method == "bf-cfb")  {
+		if ((profile.method == "bf-cfb") || (profile.method == "aes-256-cfb") || (profile.method == "des-cfb") || (profile.method == "rc4") || (profile.method == "table")) {
 		  profile.profileType = ProfileType.Shadowsocks;
 		}else{
 		  profile.profileType = ProfileType.SSH;
