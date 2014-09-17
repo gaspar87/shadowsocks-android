@@ -1,6 +1,7 @@
 /*
- * Shadowsocks - A shadowsocks client for Android
- * Copyright (C) 2014 <max.c.lv@gmail.com>
+ * TunnelAr - A SSH/Shadowsocks client for Android 
+ * based on Shadowsocks - A shadowsocks client for Android
+ * Copyright (C) 2014 <max.c.lv@gmail.com> <gdelca5@gmail.com> <gaspar87@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,7 +38,7 @@
  *
  */
 
-package com.github.shadowsocks
+package com.github.tunnelar
 
 import android.app._
 import android.content._
@@ -57,39 +58,53 @@ import com.github.shadowsocks.utils._
 import scala.Some
 import com.github.shadowsocks.aidl.{IShadowsocksService, Config}
 import scala.collection.mutable.ArrayBuffer
-import com.github.tunnelar._
-import com.github.shadowsocks._
 import java.io.File
+import com.github.shadowsocks.dpfwds._
+import com.github.shadowsocks._
 
-class ShadowsocksVpnService extends CustomVpnService {
+class SSHVpnService extends CustomVpnService {
 
-  def startShadowsocksDaemon() {
-    val cmd: String = (Path.BASE +
-      "ss-local -b 127.0.0.1 -s '%s' -p '%d' -l '%d' -k '%s' -m '%s' -u -f " +
-      Path.BASE + "ss-local.pid")
-      .format(config.proxy, config.remotePort, config.localPort, config.sitekey, config.encMethod)
-    if (BuildConfig.DEBUG) Log.d(TAG, cmd)
-    System.exec(cmd)
-  }  
-
+  var dpfwds: Option[DPfwdS] = None
+  
+  def startSSHDaemon() {
+	dpfwds.map{ _dpfwds =>
+              _dpfwds.terminate
+              dpfwds = None
+	    } orElse {
+              val _dpfwds = new DPfwdS("127.0.0.1",
+                                      config.localPort,"tunnelar", config.proxy, config.remotePort, 
+                                      passwd = Some(config.sitekey.mkString))
+  
+              _dpfwds.start
+              dpfwds = Some(_dpfwds)
+              dpfwds
+	    }	
+  }
+  
   /** Called when the activity is first created. */
   override def handleConnection: Boolean = {
     startVpn()
-    startShadowsocksDaemon()
+    startSSHDaemon()
     if (!config.isUdpDns) startDnsDaemon()
     true
-  }
-
+  }  
+  
   override def killProcesses() {
+    Console.runRootCommand(Utils.getIptables + " -t nat -F OUTPUT")
+
     val ab = new ArrayBuffer[String]
 
-    ab.append("kill -9 `cat " + Path.BASE + "ss-local.pid`")
-    ab.append("killall -9 ss-local")
     ab.append("kill -9 `cat " + Path.BASE + "tun2socks.pid`")
     ab.append("killall -9 tun2socks")
     ab.append("kill -15 `cat " + Path.BASE + "pdnsd.pid`")
     ab.append("killall -15 pdnsd")
 
-    Console.runCommand(ab.toArray)
+    Console.runRootCommand(ab.toArray)
+	
+	dpfwds.map{ _dpfwds =>
+              _dpfwds.terminate
+              dpfwds = None
+	}
   }
+
 }

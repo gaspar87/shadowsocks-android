@@ -212,8 +212,7 @@ class Shadowsocks
     if (currentProfile.profileType == ProfileType.SSH) {
        if (!isVpnEnabled) classOf[SSHNatService] else classOf[ShadowsocksVpnService]
 	} else {
-	   // TODO falta el SSHVPNService
-	   if (!isVpnEnabled) classOf[ShadowsocksNatService] else classOf[ShadowsocksVpnService]
+	   if (!isVpnEnabled) classOf[ShadowsocksVpnService] else classOf[ShadowsocksVpnService]
 	}
   }
   
@@ -559,8 +558,8 @@ class Shadowsocks
 	  // FIXME  val s = getClassServiceFromCurrentProfile()       
 	  val s = if (!isVpnEnabled) 
 	      (if (currentProfile.profileType == ProfileType.SSH) classOf[SSHNatService] else classOf[ShadowsocksNatService]) 
-		  else classOf[ShadowsocksVpnService]
-	  
+		  else (if (currentProfile.profileType == ProfileType.SSH) classOf[SSHVpnService] else classOf[ShadowsocksVpnService]) 
+	  	  
       val intent = new Intent(this, s)
       intent.setAction(Action.SERVICE)
       bindService(intent, connection, Context.BIND_AUTO_CREATE)
