@@ -128,7 +128,7 @@ object Shadowsocks {
 
   val PREFS_NAME = "Shadowsocks"
   val PROXY_PREFS = Array(Key.profileName, Key.proxy, Key.remotePort, Key.localPort, Key.sitekey,
-    Key.encMethod)
+    Key.encMethod, Key.userName)
   val FEATRUE_PREFS = Array(Key.isGFWList, Key.isGlobalProxy, Key.proxyedApps, Key.isTrafficStat,
     Key.isUdpDns, Key.isAutoConnect)
 
@@ -167,7 +167,8 @@ object Shadowsocks {
       case Key.remotePort => updateSummaryEditTextPreference(pref, profile.remotePort.toString)
       case Key.localPort => updateSummaryEditTextPreference(pref, profile.localPort.toString)
       case Key.sitekey => updatePasswordEditTextPreference(pref, profile.password)
-      case Key.encMethod => updateListPreference(pref, profile.method)
+	  case Key.encMethod => updateListPreference(pref, profile.method)	  
+	  case Key.userName => updateSummaryEditTextPreference(pref, profile.method)      
 	  // TODO mostrar de alguna forma si el perfil corresponde a SSH o Shadowsocks
       case Key.isGFWList => updateCheckBoxPreference(pref, profile.chnroute)
       case Key.isGlobalProxy => updateCheckBoxPreference(pref, profile.global)
@@ -840,6 +841,8 @@ class Shadowsocks
 
   private def updatePreferenceScreen() {      
     val profile = currentProfile
+	// TODO ocultar if (profile.profileType == ProfileType.SSH)
+	   
     for (name <- Shadowsocks.PROXY_PREFS) {
       val pref = findPreference(name)
       Shadowsocks.updatePreference(pref, name, profile)

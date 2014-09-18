@@ -84,6 +84,7 @@ object Key {
   val profileType = "profileType"
   val remotePort = "remotePort"
   val localPort = "port"
+  val userName = "userName"
 }
 
 object Scheme {

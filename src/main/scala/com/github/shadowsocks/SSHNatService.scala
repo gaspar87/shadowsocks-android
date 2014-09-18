@@ -62,7 +62,7 @@ class SSHNatService extends NatService {
               dpfwds = None
 	    } orElse {
               val _dpfwds = new DPfwdS("127.0.0.1",
-                                      config.localPort,"tunnelar", config.proxy, config.remotePort, 
+                                      config.localPort, config.encMethod, config.proxy, config.remotePort, 
                                       passwd = Some(config.sitekey.mkString))
   
               _dpfwds.start

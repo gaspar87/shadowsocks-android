@@ -52,6 +52,12 @@
 						android:entryValues="@array/enc_method_value"
 						android:title="@string/enc_method">
 				</com.github.shadowsocks.preferences.SummaryListPreference>
+				<com.github.shadowsocks.preferences.SummaryEditTextPreference
+						android:defaultValue=""
+						android:key="userName"
+						android:summary="Username"
+						android:title="Username">
+				</com.github.shadowsocks.preferences.SummaryEditTextPreference>								
 
 			</PreferenceCategory>
 

@@ -126,7 +126,9 @@ class ProfileManager(settings: SharedPreferences, dbHelper: DBHelper) {
     edit.putString(Key.profileName, profile.name)
     edit.putString(Key.proxy, profile.host)
     edit.putString(Key.sitekey, profile.password)	
-    edit.putString(Key.encMethod, profile.method)	
+    edit.putString(Key.encMethod, profile.method)
+	// FIXME parche feo
+	edit.putString(Key.userName, profile.method)
 	edit.putString(Key.profileType, profile.profileType.toString)
     edit.putString(Key.remotePort, profile.remotePort.toString)
     edit.putString(Key.localPort, profile.localPort.toString)
