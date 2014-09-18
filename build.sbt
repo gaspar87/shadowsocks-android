@@ -46,6 +46,7 @@ proguardOptions in Android ++= Seq("-keep class android.support.v4.app.** { *; }
           "-keep interface com.actionbarsherlock.** { *; }",
           "-keep class org.jraf.android.backport.** { *; }",
           "-keep class com.github.shadowsocks.** { *; }",
+		  "-keep class com.github.tunnelar.** { *; }",
           "-keep class * extends com.j256.ormlite.** { *; }",
 		  "-keep class com.jcraft.jsch.** { *; }",		  
           "-keepattributes *Annotation*",
