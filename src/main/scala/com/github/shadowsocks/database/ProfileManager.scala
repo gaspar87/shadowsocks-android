@@ -43,7 +43,7 @@ import android.util.Log
 import com.github.shadowsocks._
 import android.content.{SharedPreferences, Context}
 import com.github.shadowsocks.utils.Key
-import com.github.tunnelar.database.ProfileType
+import com.github.shadowsocks.database.ProfileType
 
 class ProfileManager(settings: SharedPreferences, dbHelper: DBHelper) {
 

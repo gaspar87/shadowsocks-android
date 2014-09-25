@@ -40,7 +40,7 @@
 package com.github.shadowsocks.database
 
 import com.j256.ormlite.field.{DataType, DatabaseField}
-import com.github.tunnelar.database.ProfileType
+import com.github.shadowsocks.database.ProfileType
 
 class Profile {
   @DatabaseField(generatedId = true)

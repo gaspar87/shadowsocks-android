@@ -63,9 +63,6 @@ import android.graphics.Color
 import com.github.shadowsocks.aidl.Config
 import scala.collection.mutable.ArrayBuffer
 import java.io.File
-import com.github.tunnelar._
-
-case class TrafficStat(tx: Long, rx: Long, timestamp: Long)
 
 class ShadowsocksNatService extends NatService {
 

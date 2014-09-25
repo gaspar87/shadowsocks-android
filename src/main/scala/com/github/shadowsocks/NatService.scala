@@ -21,7 +21,7 @@
  *
  */
  
-package com.github.tunnelar
+package com.github.shadowsocks
  
 import android.app.Notification
 import android.app.NotificationManager
@@ -47,7 +47,6 @@ import android.graphics.Color
 import com.github.shadowsocks.aidl.Config
 import scala.collection.mutable.ArrayBuffer
 import java.io.File
-import com.github.shadowsocks._
 
 case class TrafficStat(tx: Long, rx: Long, timestamp: Long)
 

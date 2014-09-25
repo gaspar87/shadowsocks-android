@@ -38,7 +38,7 @@
  *
  */
 
-package com.github.tunnelar
+package com.github.shadowsocks
 
 import android.app._
 import android.content._
@@ -60,7 +60,6 @@ import com.github.shadowsocks.aidl.{IShadowsocksService, Config}
 import scala.collection.mutable.ArrayBuffer
 import java.io.File
 import com.github.shadowsocks.dpfwds._
-import com.github.shadowsocks._
 
 class SSHVpnService extends CustomVpnService {
 

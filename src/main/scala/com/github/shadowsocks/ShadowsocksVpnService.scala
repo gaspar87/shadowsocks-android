@@ -57,7 +57,6 @@ import com.github.shadowsocks.utils._
 import scala.Some
 import com.github.shadowsocks.aidl.{IShadowsocksService, Config}
 import scala.collection.mutable.ArrayBuffer
-import com.github.tunnelar._
 import com.github.shadowsocks._
 import java.io.File
 

@@ -21,7 +21,7 @@
  *
  */
 
-package com.github.tunnelar
+package com.github.shadowsocks
  
 import android.app.Notification
 import android.app.NotificationManager
@@ -48,7 +48,6 @@ import com.github.shadowsocks.aidl.Config
 import scala.collection.mutable.ArrayBuffer
 import java.io.File
 import com.github.shadowsocks.dpfwds._
-import com.github.shadowsocks._
 
 class SSHNatService extends NatService {
 

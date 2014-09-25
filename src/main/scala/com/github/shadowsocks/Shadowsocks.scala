@@ -75,8 +75,7 @@ import scala.Some
 import com.github.shadowsocks.database.Item
 import com.github.shadowsocks.database.Category
 import com.github.shadowsocks.utils.Console
-import com.github.tunnelar._
-import com.github.tunnelar.database.ProfileType
+import com.github.shadowsocks.database.ProfileType
 
 class ProfileIconDownloader(context: Context, connectTimeout: Int, readTimeout: Int)
   extends BaseImageDownloader(context, connectTimeout, readTimeout) {
@@ -209,17 +208,9 @@ class Shadowsocks
     }
   }
   
-  private def getClassServiceFromCurrentProfile() {
-    if (currentProfile.profileType == ProfileType.SSH) {
-       if (!isVpnEnabled) classOf[SSHNatService] else classOf[ShadowsocksVpnService]
-	} else {
-	   if (!isVpnEnabled) classOf[ShadowsocksVpnService] else classOf[ShadowsocksVpnService]
-	}
-  }
-  
   private def updateServiceName() {
     if (currentProfile.profileType == ProfileType.SSH) {
-       if (!isVpnEnabled) classOf[SSHNatService] else classOf[ShadowsocksVpnService]
+       if (!isVpnEnabled) classOf[SSHNatService] else classOf[SSHVpnService]
 	} else {
 	   // TODO falta el SSHVPNService
 	   if (!isVpnEnabled) classOf[ShadowsocksNatService] else classOf[ShadowsocksVpnService]
@@ -556,7 +547,8 @@ class Shadowsocks
   def attachService() {
     if (bgService == null) {
 	  // TODO: solo classOf[ShadowsocksNatService].getName si el profile es de tipo Shadowsocks
-	  // FIXME  val s = getClassServiceFromCurrentProfile()       
+	  // FIXME  val s = getClassServiceFromCurrentProfile()    
+	
 	  val s = if (!isVpnEnabled) 
 	      (if (currentProfile.profileType == ProfileType.SSH) classOf[SSHNatService] else classOf[ShadowsocksNatService]) 
 		  else (if (currentProfile.profileType == ProfileType.SSH) classOf[SSHVpnService] else classOf[ShadowsocksVpnService]) 

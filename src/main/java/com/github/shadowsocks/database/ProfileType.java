@@ -17,7 +17,7 @@
  *
  */
 
-package com.github.tunnelar.database;
+package com.github.shadowsocks.database;
 
 public enum ProfileType {
     SSH, Shadowsocks

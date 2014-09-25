@@ -89,6 +89,23 @@
         <action android:name="android.net.VpnService"/>
       </intent-filter>
     </service>
+	
+    <service
+        android:name=".SSHNatService"
+        android:process=":proxy"
+        android:exported="false">
+    </service>
+
+    <service
+        android:name=".SSHVpnService"
+        android:label="@string/app_name"
+        android:process=":vpn"
+        android:permission="android.permission.BIND_VPN_SERVICE"
+        android:exported="false">
+      <intent-filter>
+        <action android:name="android.net.VpnService"/>
+      </intent-filter>
+    </service>	
 
     <receiver android:name=".ShadowsocksReceiver">
       <intent-filter>

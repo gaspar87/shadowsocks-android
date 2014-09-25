@@ -40,7 +40,7 @@
 package com.github.shadowsocks.utils
 
 import com.github.shadowsocks.database.Profile
-import com.github.tunnelar.database.ProfileType
+import com.github.shadowsocks.database.ProfileType
 import android.net.Uri
 import android.util.{Log, Base64}
 
