@@ -66,18 +66,35 @@ class SSHVpnService extends CustomVpnService {
   var dpfwds: Option[DPfwdS] = None
   
   def startSSHDaemon() {
-	dpfwds.map{ _dpfwds =>
-              _dpfwds.terminate
-              dpfwds = None
-	    } orElse {
-              val _dpfwds = new DPfwdS("127.0.0.1",
-                                      config.localPort, config.encMethod, config.proxy, config.remotePort, 
-                                      passwd = Some(config.sitekey.mkString))
   
-              _dpfwds.start
-              dpfwds = Some(_dpfwds)
-              dpfwds
-	    }	
+	Log.d(TAG, "-------------startSSHDaemon -------------------")
+  	Log.d("config.localPort", config.localPort.toString)
+	Log.d("config.encMethod", config.encMethod)
+	Log.d("config.proxy", config.proxy)
+	Log.d("config.remotePort", config.remotePort.toString)
+	Log.d("passwd", config.sitekey.mkString)
+	
+	try {
+		dpfwds.map{ _dpfwds =>
+				  _dpfwds.terminate
+				  dpfwds = None
+			} orElse {
+				  val _dpfwds = new DPfwdS(bindAddress = "127.0.0.1",
+									socksPort = config.localPort, 
+									user = config.encMethod, 
+									host = config.proxy, 
+									sshPort = config.remotePort, 
+									passwd = Some(config.sitekey.mkString))
+	  
+				  _dpfwds.start
+				  dpfwds = Some(_dpfwds)
+				  dpfwds
+			}	
+    } catch {
+		case e: Exception =>
+		Log.e(TAG, "ENTRO AL CATCH " + e.getMessage)
+    }
+	Log.d(TAG, "-------------END startSSHDaemon -------------------")		
   }
   
   /** Called when the activity is first created. */

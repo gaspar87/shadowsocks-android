@@ -38,7 +38,7 @@ class DPfwdS (val bindAddress: String = "127.0.0.1",
              val passwd: Option[String] ) extends Thread {
 
   var running = true
-  val session = JSchSession(user, host, 22, passwd = passwd)
+  val session = JSchSession(user, host, sshPort, passwd = passwd)
   var ss: Option[ServerSocket] = None
 
   override def run = {

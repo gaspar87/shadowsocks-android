@@ -60,9 +60,12 @@ class SSHNatService extends NatService {
               _dpfwds.terminate
               dpfwds = None
 	    } orElse {
-              val _dpfwds = new DPfwdS("127.0.0.1",
-                                      config.localPort, config.encMethod, config.proxy, config.remotePort, 
-                                      passwd = Some(config.sitekey.mkString))
+				  val _dpfwds = new DPfwdS(bindAddress = "127.0.0.1",
+									socksPort = config.localPort, 
+									user = config.encMethod, 
+									host = config.proxy, 
+									sshPort = config.remotePort, 
+									passwd = Some(config.sitekey.mkString))
   
               _dpfwds.start
               dpfwds = Some(_dpfwds)
